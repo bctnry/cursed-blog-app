@@ -36,8 +36,8 @@ Then:
 1. Compile the helper command (and you absolutely need this helper command). Run `go build` under `./helper/bcrypt` to build it.
 2. Make sure that the following folders exist:
    + `./db/article`
-   + `y./db/comment`
-   + `y./db/session`
+   + `./db/comment`
+   + `./db/session`
 3. Edit `lighttpd.conf`. The `server.document-root` needs to point to the path of the `wwwroot` folder.
 4. At project root run `lighttpd -D -f ./lighttpd.conf`
 
