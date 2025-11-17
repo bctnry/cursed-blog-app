@@ -1,0 +1,5 @@
+%rec: User
+%type: Username line
+%type: PasswordHash line
+%mandatory: Username PasswordHash
+

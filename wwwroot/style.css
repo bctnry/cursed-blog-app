@@ -1,0 +1,44 @@
+body {
+	width: 640px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+.comment {
+	padding: 1rem;
+	border-bottom: 2px black solid;
+}
+.comment-id { display: inline-block; }
+.comment-id::before { content: "#"; }
+.comment-name { display: inline-block; }
+a { color: black; }
+
+.login-form { margin-top: 3rem; }
+.login-form table { margin: 0 auto; }
+#create-article-form { margin-top: 3rem; }
+#create-article-form > table { width: 100%; }
+#create-article-form td { vertical-align: top; }
+#create-article-form input { width: 100%; }
+#create-article-form textarea { width: 100%; height: 20rem; }
+#edit-article-form { margin-top: 3rem; }
+#edit-article-form > table { width: 100%; }
+#edit-article-form td { vertical-align: top; }
+#edit-article-form input { width: 100%; }
+#edit-article-form textarea { width: 100%; height: 20rem; }
+#main {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+}
+.article { margin-top: 1rem; }
+.article-title { font-weight: bold; }
+.article-datetime { font-size: 0.8rem; color: gray; }
+.bottom-nav { margin-top: 2rem; }
+#comment-form { margin-top: 3rem; }
+#comment-form > table { width: 100%; }
+#comment-form td { vertical-align: top; }
+#comment-form input { width: 100%; }
+#comment-form textarea { width: 100%; height: 10rem; }
+.comment-list { margin-top: 2rem; border-top: 2px black solid; }
+.comment-email, .comment-email a { font-size: 0.8rem; color: gray; }
+.comment-website, .comment-website a { font-size: 0.8rem; color: gray; }
+.comment-datetime { font-size: 0.8rem; color: gray; }
+.comment-edit-link { font-size: 0.8rem; color: gray; }

@@ -1,0 +1,9 @@
+%rec: Comment
+%type: ID range 0 MAX
+%type: Name line
+%type: Email line
+%type: Website line
+%type: Datetime line
+%mandatory: ID Name Content
+%key: ID
+
