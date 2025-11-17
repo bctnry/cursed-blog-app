@@ -28,16 +28,29 @@ Please don't run this in production...
 
 + You need:
   + Go compiler.
+  + GNU awk.
   + Recutils and lighttpd installed and ready at PATH.
   
 Then:
   
 1. Compile the helper command (and you absolutely need this helper command). Run `go build` under `./helper/bcrypt` to build it.
 2. Make sure that the following folders exist:
-   + ~./db/article~
-   + ~./db/comment~
-   + ~./db/session~
-2. At project root run `lighttpd -D -f ./lighttpd.conf`
+   + `./db/article`
+   + `y./db/comment`
+   + `y./db/session`
+3. Edit `lighttpd.conf`. The `server.document-root` needs to point to the path of the `wwwroot` folder.
+4. At project root run `lighttpd -D -f ./lighttpd.conf`
+
+### how to add user?
+
+1.  Compile the bcrypt builder.
+2.  Generate the hash for the password you're going to use for the user.
+3.  Edit ~./db/users.rec~ and add the following:
+
+```rec
+Username: {username}
+PasswordHash: {the password hash you've just generated}
+```
 
 ### why lighttpd?
 
