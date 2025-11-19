@@ -66,6 +66,18 @@ function handle_get_all_articles(\
 	}
 
 	printf("<div id=\"main\">")
+	printf("<div id=\"article-list\">")
+	
+	printf("<div class=\"top-nav\">")
+	if (page_num < page_count-1) {
+		printf("<a hx-target=\"#article-list\" hx-get=\"html/article-list.awk?p=%d&s=%d\">&lt;&lt;</a>", page_num+1, page_size)
+	}
+	
+	if (page_num > 0) {
+		printf("<a hx-target=\"#article-list\" hx-get=\"html/article-list.awk?p=%d&s=%d\">&gt;&gt;</a>", page_num-1, page_size)
+	}
+	printf("</div>")
+	
 	if (length(articles) <= 0) {
 		printf("<p>there's no article yet. ")
 		if (chkses_res) {
@@ -80,13 +92,6 @@ function handle_get_all_articles(\
 		}
 	}
 
-	printf("<div class=\"bottom-nav\">")
-	if (page_num > 0) {
-		printf("<a href=\"?p=%d&s=%d\">newer posts</a><br />", page_num-1, page_size)
-	}
-	if (page_num < page_count-1) {
-		printf("<a href=\"?p=%d&s=%d\">older posts</a><br />", page_num+1, page_size)
-	}
 	printf("</div>")
 	
 	printf("</div>")

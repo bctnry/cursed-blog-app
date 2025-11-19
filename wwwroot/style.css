@@ -31,7 +31,8 @@ a { color: black; }
 .article { margin-top: 1rem; }
 .article-title { font-weight: bold; }
 .article-datetime { font-size: 0.8rem; color: gray; }
-.bottom-nav { margin-top: 2rem; }
+.top-nav { margin-top: 2rem; }
+.top-nav a { text-decoration: underline; }
 #comment-form { margin-top: 3rem; }
 #comment-form > table { width: 100%; }
 #comment-form td { vertical-align: top; }

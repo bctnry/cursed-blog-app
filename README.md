@@ -43,9 +43,9 @@ Then:
 
 ### how to add user?
 
-1.  Compile the bcrypt builder.
+1.  Compile the bcrypt helper.
 2.  Generate the hash for the password you're going to use for the user.
-3.  Edit ~./db/users.rec~ and add the following:
+3.  Edit `./db/users.rec` and add the following:
 
 ```rec
 Username: {username}

@@ -44,7 +44,7 @@ function handle_article_get() {
 	
 	header(article["Title"])
 	printf("<div id=\"single-article-main\">")
-	printf("  <h1 class=\"single-article-title\">%s</h1>", article["Title"])
+	printf("  <h1 class=\"single-article-title\"><a href=\"%s\">%s</a></h1>", ENVIRON["REQUEST_URI"], article["Title"])
 	printf("  <div class=\"single-article-datetime\">%s", article["Datetime"])
 	if (chkres) {
 		printf(" <a href=\"edit.awk?id=%s\">edit</a> ", GET_PARAMS["id"])
