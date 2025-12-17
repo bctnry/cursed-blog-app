@@ -64,7 +64,7 @@ function get_comment_by_id(doc_root, article_id, comment_id, out,
 	res = ""
 	while (cmd | getline line) { res = res line "\n" }
 	close(cmd)
-	rec_parse_record(res, out)
+	reclib::parse_record(res, out)
 }
 
 function update_comment_by_id(doc_root, article_id, comment_id,

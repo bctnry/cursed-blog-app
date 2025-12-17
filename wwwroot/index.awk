@@ -4,17 +4,17 @@
 @include "../lib/reclib.awk"
 @include "../lib/db_article.awk"
 @include "../lib/db_session.awk"
-@include "../lib/bcrypt_wrapper.awk"
+@include "../lib/db_user.awk"
 @include "../lib/aux.awk"
 
 BEGIN {
 	if (ENVIRON["REQUEST_METHOD"] == "GET") {
-		parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
+		cgi::parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
 		handle_get_all_articles()
 	} else if (ENVIRON["REQUEST_METHOD"] == "POST") {
 		BODY = ""
 	} else {
-		write_status(405, "Method Not Allowed")
+		cgi::write_status(405, "Method Not Allowed")
 	}
 }
 
@@ -27,14 +27,14 @@ BEGIN {
 END {
 	if (ENVIRON["REQUEST_METHOD"] == "POST") {
 		gsub(/\n$/, "", BODY)
-		parse_query(BODY, POST_PARAMS)
+		cgi::parse_query(BODY, POST_PARAMS)
 	}
 }
 
 function handle_get_all_articles(\
 	k, i,
 	chkses_res) {
-	parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
+	cgi::parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
 
 	# recutils seems to not support reverse sort order so we have to do this...
 	total_num = count_article(ENVIRON["DOCUMENT_ROOT"])
@@ -47,22 +47,26 @@ function handle_get_all_articles(\
 
 	get_all_articles(ENVIRON["DOCUMENT_ROOT"], articles, target_start, page_size)
 
-	write_http_status(200, "OK")
+	cgi::write_http_status(200, "OK")
 	
-	begin_write_http_header()
-	write_http_header("Content-Type", "text/html")
-	end_write_http_header()
+	cgi::begin_write_http_header()
+	cgi::write_http_header("Content-Type", "text/html")
+	cgi::end_write_http_header()
 
 	header()
-	parse_cookie(COOKIE)
+	cgi::parse_cookie(COOKIE)
 	chkses_res = check_session(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], COOKIE["session"])
 	if (chkses_res) {
 		printf("<div class=\"meta\">logged in as %s. <a href=\"logout.awk\">logout</a> ",
 			   COOKIE["username"])
 		printf("<a href=\"create.awk\">new post</a>")
+		get_user(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], user)
+		if (user["Role"] == "admin") {
+			printf(" <a href=\"admin.awk\">admin</a>")
+		}
 		printf("</div>")
 	} else {
-		printf("<div class=\"meta\"><a href=\"login.awk\">login</a></div>")
+		printf("<div class=\"meta\"><a href=\"login.awk\">login</a> <a href=\"register.awk\">register</a></div>")
 	}
 
 	printf("<div id=\"main\">")
@@ -70,11 +74,11 @@ function handle_get_all_articles(\
 	
 	printf("<div class=\"top-nav\">")
 	if (page_num < page_count-1) {
-		printf("<a hx-target=\"#article-list\" hx-get=\"html/article-list.awk?p=%d&s=%d\">&lt;&lt;</a>", page_num+1, page_size)
+		printf("<a href=\"index.awk?p=%d&s=%d\">&lt;&lt;</a>", page_num+1, page_size)
 	}
 	
 	if (page_num > 0) {
-		printf("<a hx-target=\"#article-list\" hx-get=\"html/article-list.awk?p=%d&s=%d\">&gt;&gt;</a>", page_num-1, page_size)
+		printf("<a href=\"index.awk?p=%d&s=%d\">&gt;&gt;</a>", page_num-1, page_size)
 	}
 	printf("</div>")
 	
@@ -87,7 +91,7 @@ function handle_get_all_articles(\
 	} else {
 		reverse(articles, articles_2)
 		for (i in articles_2) {
-			rec_parse_record(articles_2[i], article)
+			reclib::parse_record(articles_2[i], article)
 			print render_article(article)
 		}
 	}

@@ -1,0 +1,26 @@
+<div class="main">
+  <p>editing {{Username}}</p>
+
+  <div style="margin-top:2rem">
+	<a href="./admin-user.awk">Back</a>
+  </div>
+
+  <form style="margin-top:2rem" action="" method="POST">
+	<input type="hidden" name="username" value="{{Username}}" />
+	<input type="hidden" name="action" value="update-role" />
+	<label for="s-role">select user new role:</label>
+	<select id="s-role" name="role">
+	  {{_RoleSelect}}
+	</select>
+	<input type="submit" value="save" />
+  </form>
+  
+  <form style="margin-top:2rem" action="" method="POST">
+	<input type="hidden" name="username" value="{{Username}}" />
+	<input type="hidden" name="action" value="update-password" />
+	<label for="tf-password">set user new password:</label>
+	<input type="password" id="tf-password" name="password" />
+	<input type="submit" value="save" />
+  </form>
+</div>
+

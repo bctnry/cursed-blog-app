@@ -1,3 +1,5 @@
+@namespace "reclib"
+
 # copied from
 #     https://www.gnu.org/software/gawk/manual/html_node/Join-Function.html
 function join(array, start, end, sep,    result, i)
@@ -12,11 +14,11 @@ function join(array, start, end, sep,    result, i)
     return result
 }
 
-function rec_parse_record(str, out,
-						  # local var
-						  n, lines, key, val,
-						  ml, ml_key, ml_res, tmp,
-						  matchres) {
+function parse_record(str, out,
+					  # local var
+					  n, lines, key, val,
+					  ml, ml_key, ml_res, tmp,
+					  matchres) {
 	n = split(str, lines, /\n/)
 	delete out
 	delete ml
@@ -61,7 +63,7 @@ function rec_parse_record(str, out,
 	}
 	if (length(ml) > 1) {
 		ml_res = join(ml, 1, length(ml), "\n")
-		if (isarray(out[ml_key])) {
+		if (awk::isarray(out[ml_key])) {
 			out[ml_key][length(out[ml_key])] = ml_res
 		} else {
 			out[ml_key] = ml_res

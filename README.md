@@ -27,30 +27,20 @@ Please don't run this in production...
 ## how to run
 
 + You need:
-  + Go compiler.
+  + A C compiler to compile the gawk_bcrypt extension.
   + GNU awk.
   + Recutils and lighttpd installed and ready at PATH.
   
 Then:
   
-1. Compile the helper command (and you absolutely need this helper command). Run `go build` under `./helper/bcrypt` to build it.
-2. Make sure that the following folders exist:
+1. Compile the gawk_bcrypt extension (and you absolutely need this helper command). You can get it at https://github.com/bctnry/gawk-bcrypt .
+2. Put the compiled extension (`bcrypt.so`) at the root directory & rename it to `gawk_bcrypt.so` (so that you won't be having chances of mistaking it for something important)
+3. Make sure that the following folders exist:
    + `./db/article`
    + `./db/comment`
    + `./db/session`
-3. Edit `lighttpd.conf`. The `server.document-root` needs to point to the path of the `wwwroot` folder.
-4. At project root run `lighttpd -D -f ./lighttpd.conf`
-
-### how to add user?
-
-1.  Compile the bcrypt helper.
-2.  Generate the hash for the password you're going to use for the user.
-3.  Edit `./db/users.rec` and add the following:
-
-```rec
-Username: {username}
-PasswordHash: {the password hash you've just generated}
-```
+4. Edit `lighttpd.conf`. The `server.document-root` needs to point to the path of the `wwwroot` folder.
+5. At project root run `lighttpd -D -f ./lighttpd.conf`
 
 ### why lighttpd?
 
@@ -58,7 +48,7 @@ This project uses CGI and lighttpd is a very lightweight http server that suppor
 
 NGINX seems to not have built-in CGI support. Please run it with lighttpd and connect it through reverse proxy.
 
-### why helper command?
+### why extension?
 
 + recutils provide symmetric encryption but no hash which is not suitable for storing password.
 + theoretically you can implement some hash functions purely in awk but it's bloody hard to make a cryptographically safe one.

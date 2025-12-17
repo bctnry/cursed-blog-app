@@ -1,3 +1,5 @@
+@include "../lib/template.awk"
+
 function trim_space(out, v) {
 	v = out
 	gsub(/^[[:space:]]+/, "", v)
@@ -5,45 +7,43 @@ function trim_space(out, v) {
 	return v
 }
 
+function render_redirect_template(doc_root,
+								  title, status, msg, target, redirect_time_s,
+								  #local
+								  tf, data) {
+	tf = doc_root "../templates/redirect.html"
+	delete data
+	data["Title"] = title
+	data["Status"] = status
+	data["Message"] = msg
+	data["Target"] = target
+	data["RefreshTime"] = redirect_time_s
+	return template::render_template_file(tf, data)
+}
+
 function render_error_template(doc_root, status, msg, target, redirect_time_s,
 							   #local
-							   cfg, res, line,
-							   cmd, template_file) {
-	template_file = doc_root "../templates/error_msg.html"
-	cmd = "recfmt -f " template_file
-	cfg = sprintf("ErrorStatus: %d\nErrorMessage: %s\nTarget: %s\nRefreshTime: %d\n",
-				  status, msg, target, redirect_time_s)
-	res = ""
-	printf("%s", cfg) | cmd
-	while (cmd | getline line) { res = res line "\n" }
-	close(cmd)
-	return res
+							   tf, data) {
+	return render_redirect_template(\
+		doc_root, sprintf("Error %d", status),
+		status, msg, target, redirect_time_s)
 }
 
 function render_header_template(doc_root, title,
 								#local
-								cfg, res, line,
-								cmd, template_file) {
-	template_file = doc_root "../templates/header.html"
-	cmd = "recfmt -f " template_file
-	cfg = sprintf("Title: %s\n", title)
-    res = ""
-	printf("%s", cfg) |& cmd
-	close(cmd, "to")
-	while (cmd |& getline line) { res = res line "\n" }
-	close(cmd)
-	return res
+							    data, tf) {
+	tf = doc_root "../templates/header.html"
+	delete data
+	data["Title"] = title
+	return template::render_template_file(tf, data)
 }
 
 function render_footer_template(doc_root,
 								#local
-								res, line,
-								cmd, template_file) {
-	template_file = doc_root "../templates/footer.html"
-    res = ""
-	while (getline line < template_file) { res = res line "\n" }
-	close(template_file)
-	return res
+								tf, data) {
+	tf = doc_root "../templates/footer.html"
+	delete data
+	return template::render_template_file(tf, data)
 }
 
 function random_string(cset, n,

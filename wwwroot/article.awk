@@ -5,48 +5,51 @@
 @include "../lib/db_article.awk"
 @include "../lib/db_session.awk"
 @include "../lib/db_comment.awk"
-@include "../lib/bcrypt_wrapper.awk"
+@include "../lib/db_user.awk"
 @include "../lib/aux.awk"
 
 BEGIN {
-	if (is_get_request()) {
+	if (cgi::is_get_request()) {
 		handle_article_get()
-	} else if (is_post_request()) {
+	} else if (cgi::is_post_request()) {
 		BODY = ""
 	} else {
-		write_http_status(405, "Method Not Allowed")
+		cgi::write_http_status(405, "Method Not Allowed")
 	}
 }
 
 {
-	if (is_post_request()) { BODY = BODY $0 "\n" }
+	if (cgi::is_post_request()) { BODY = BODY $0 "\n" }
 }
 
 END {
-	if (is_post_request()) {
+	if (cgi::is_post_request()) {
 		handle_article_post()
 	}
 }
 
 function handle_article_get() {
-	parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
+	cgi::parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
 
-	parse_cookie(COOKIE)
+	cgi::parse_cookie(COOKIE)
 	chkres = check_session(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], COOKIE["session"])
+
+	getuser_res = get_user(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], user)
 
 	get_article_by_id(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["id"], article)
 	get_all_comments_of_article(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["id"], comment_list)
 
-	write_http_status(200, "OK")
-	begin_write_http_header()
-	write_http_header("Content-Type", "text/html")
-	end_write_http_header()
+	cgi::write_http_status(200, "OK")
+	cgi::begin_write_http_header()
+	cgi::write_http_header("Content-Type", "text/html")
+	cgi::end_write_http_header()
 	
 	header(article["Title"])
 	printf("<div id=\"single-article-main\">")
 	printf("  <h1 class=\"single-article-title\"><a href=\"%s\">%s</a></h1>", ENVIRON["REQUEST_URI"], article["Title"])
+	printf("  <div class=\"single-article-author\">by %s</di>", article["Author"])
 	printf("  <div class=\"single-article-datetime\">%s", article["Datetime"])
-	if (chkres) {
+	if (chkres && getuser_res && (user["Username"] == COOKIE["username"] || user["Role"] == "admin")) {
 		printf(" <a href=\"edit.awk?id=%s\">edit</a> ", GET_PARAMS["id"])
 	}
 	printf("</div>")
@@ -57,7 +60,7 @@ function handle_article_get() {
 	# comments.
 	printf("<div class=\"comment-list\">")
 	for (k in comment_list) {
-		rec_parse_record(comment_list[k], r)
+		reclib::parse_record(comment_list[k], r)
 		display_comment(r["ID"], comment_list[k], chkres)
 	}
 	printf("</div>")
@@ -94,21 +97,33 @@ function display_comment_form(line, template_file) {
 	while ((getline line < template_file) > 0) { printf("%s\n", line) }
 }
 
+function _report_no_permission() {
+	cgi::write_http_status(403, "Forbidden")
+	cgi::begin_write_http_header()
+	cgi::write_http_header("Content-Type", "text/html")
+	cgi::end_write_http_header()
+	printf("%s", render_error_template(\
+			   ENVIRON["DOCUMENT_ROOT"],
+			   403,
+			   "Invalid credentials.",
+			   "/index.awk",
+			   3))
+}
+
 function handle_article_post() {
-	parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
-	parse_query(BODY, POST_PARAMS)
+	cgi::parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
+	cgi::parse_query(BODY, POST_PARAMS)
 	new_comment(ENVIRON["DOCUMENT_ROOT"],
 				GET_PARAMS["id"],
 				POST_PARAMS["name"],
 				POST_PARAMS["email"],
 				POST_PARAMS["website"],
 				POST_PARAMS["content"])
-
-	write_http_status(302, "Found")
-	begin_write_http_header()
-	write_http_header("Location", ENVIRON["REQUEST_URI"])
-	write_http_header("Content-Length", "0")
-	end_write_http_header()
+	cgi::write_http_status(302, "Found")
+	cgi::begin_write_http_header()
+	cgi::write_http_header("Location", ENVIRON["REQUEST_URI"])
+	cgi::write_http_header("Content-Length", "0")
+	cgi::end_write_http_header()
 }
 
 

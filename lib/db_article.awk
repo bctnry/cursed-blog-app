@@ -20,7 +20,7 @@ function get_article_by_id(doc_root, id, out,
 	res = ""
 	while (cmd | getline line) { res = res line "\n" }
 	close(cmd)
-	rec_parse_record(res, out)
+	reclib::parse_record(res, out)
 	content_file = sprintf("%s%s%d", doc_root, "../db/article/", id)
 	res2 = ""
 	while ((getline line < content_file) > 0) { res2 = res2 line "\n" }
@@ -29,12 +29,13 @@ function get_article_by_id(doc_root, id, out,
 }
 
 function get_all_articles(doc_root, out,
-						  #local
-						  start, page_size, end,
-						  cmd, articles_file) {
+						  #optional
+						  start, page_size,
+						  #local,
+						  end, cmd, articles_file) {
 	articles_file = doc_root "../db/articles.rec"
 	cmd = "recsel -t Article "
-	# `recsel` `-n` ranges are inclusive...
+	# `recsel -n` ranges are inclusive...
 	if (start != "" && page_size == "") {
 		page_size = 30
 		end = start + page_size - 1
@@ -65,7 +66,7 @@ function get_all_articles(doc_root, out,
 	close(cmd)
 }
 
-function create_article(doc_root, title, content,
+function create_article(doc_root, title, content, author,
 						#local
 						time, newid, article_content_file,
 						article_comment_template_file, article_comment_file, line, c,
@@ -75,6 +76,7 @@ function create_article(doc_root, title, content,
 	cmd = "recins -t Article "
 	cmd = cmd sprintf("-f ID -v %d ", newid)
 	cmd = cmd sprintf("-f Title -v \"%s\" ", title)
+	cmd = cmd sprintf("-f Author -v \"%s\" ", author)
 	"date" | getline time
 	cmd = cmd sprintf("-f Datetime -v \"%s\" ", time)
 	cmd = cmd sprintf("-f Timestamp -v %d ", get_timestamp())
@@ -116,3 +118,19 @@ function update_article(doc_root, id, title, content,
 	close(cmd)
 	write_article_content(doc_root, id, content)
 }
+
+function delete_article(doc_root, id,
+						#local
+						cmd, f) {
+	f = doc_root "../db/articles.rec"
+	cmd = sprintf("recdel -t Article -e \"ID = %d\" ", int(id))
+	cmd = cmd " " f " >/dev/null"
+	system(cmd)
+	close(cmd)
+	f = doc_root sprintf("../db/comment/%d.rec", int(id))
+	# NOTE: even gawk does not have a built-in "delete file" function.
+	cmd = "rm " f
+	system(cmd)
+	close(cmd)
+}
+

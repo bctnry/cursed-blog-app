@@ -4,37 +4,36 @@
 @include "../lib/reclib.awk"
 @include "../lib/db_comment.awk"
 @include "../lib/db_session.awk"
-@include "../lib/bcrypt_wrapper.awk"
 @include "../lib/aux.awk"
 
 BEGIN {
-	if (is_get_request()) {
+	if (cgi::is_get_request()) {
 		handle_edit_comment_get()
-	} else if (is_post_request()) {
+	} else if (cgi::is_post_request()) {
 		BODY = ""
 	} else {
-		write_http_status(405, "Method Not Allowed")
+		cgi::write_http_status(405, "Method Not Allowed")
 	}
 }
 
 {
-	if (is_post_request()) { BODY = BODY $0 "\n" }
+	if (cgi::is_post_request()) { BODY = BODY $0 "\n" }
 }
 
 END {
-	if (is_post_request()) {
+	if (cgi::is_post_request()) {
 		handle_edit_comment_post()
 	}
 }
 
 function handle_edit_comment_get() {
-	parse_cookie(COOKIE)
+	cgi::parse_cookie(COOKIE)
 	chkres = check_session(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], COOKIE["session"])
 	if (!chkres) {
-		write_http_status(403, "Forbidden")
-		begin_write_http_header()
-		write_http_header("Content-Type", "text/html")
-		end_write_http_header()
+		cgi::write_http_status(403, "Forbidden")
+		cgi::begin_write_http_header()
+		cgi::write_http_header("Content-Type", "text/html")
+		cgi::end_write_http_header()
 		printf("%s", render_error_template(		\
 				   ENVIRON["DOCUMENT_ROOT"],
 				   403,
@@ -43,13 +42,13 @@ function handle_edit_comment_get() {
 				   5))
 		return
 	}
-	parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
+	cgi::parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
 	get_comment_by_id(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["pid"], GET_PARAMS["cid"], comment)
 	
-	write_http_status(200, "OK")
-	begin_write_http_header()
-	write_http_header("Content-Type", "text/html")
-	end_write_http_header()
+	cgi::write_http_status(200, "OK")
+	cgi::begin_write_http_header()
+	cgi::write_http_header("Content-Type", "text/html")
+	cgi::end_write_http_header()
 
 	header()
 	printf("<form id=\"edit-comment-form\" action=\"#\" method=\"POST\">")
@@ -84,13 +83,13 @@ function handle_edit_comment_get() {
 }
 
 function handle_edit_comment_post() {
-	parse_cookie(COOKIE)
+	cgi::parse_cookie(COOKIE)
 	chkres = check_session(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], COOKIE["session"])
 	if (!chkres) {
-		write_http_status(403, "Forbidden")
-		begin_write_http_header()
-		write_http_header("Content-Type", "text/html")
-		end_write_http_header()
+		cgi::write_http_status(403, "Forbidden")
+		cgi::begin_write_http_header()
+		cgi::write_http_header("Content-Type", "text/html")
+		cgi::end_write_http_header()
 		printf("%s", render_error_template(		\
 				   ENVIRON["DOCUMENT_ROOT"],
 				   403,
@@ -100,18 +99,18 @@ function handle_edit_comment_post() {
 		return
 	}
 	
-	parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
-	parse_query(BODY, POST_PARAMS)
+	cgi::parse_query(ENVIRON["QUERY_STRING"], GET_PARAMS)
+	cgi::parse_query(BODY, POST_PARAMS)
 	update_comment_by_id(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["pid"], GET_PARAMS["cid"],
 						 POST_PARAMS["name"], POST_PARAMS["email"], POST_PARAMS["website"],
 						 POST_PARAMS["content"])
 
-	write_http_status(302, "Found")
-	begin_write_http_header()
-	write_http_header("Content-Type", "text/html")
-	write_http_header("Content-Length", "0")
-	write_http_header("Location", sprintf("article.awk?id=%s", GET_PARAMS["pid"]))
-	end_write_http_header()
+	cgi::write_http_status(302, "Found")
+	cgi::begin_write_http_header()
+	cgi::write_http_header("Content-Type", "text/html")
+	cgi::write_http_header("Content-Length", "0")
+	cgi::write_http_header("Location", sprintf("article.awk?id=%s", GET_PARAMS["pid"]))
+	cgi::end_write_http_header()
 }
 
 function header() {

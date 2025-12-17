@@ -1,3 +1,5 @@
+@namespace "cgi"
+
 # this is to be used with lighttpd.
 
 # convert escaped url back to unescaped strings.
@@ -46,8 +48,8 @@ function parse_query(str, out,
 		j = index(res_1[i], "=")
 		k = substr(res_1[i], 1, j-1)
 		v = substr(res_1[i], j+1)
-		k = gensub(/\+/, " ", "g", k)
-		v = gensub(/\+/, " ", "g", v)
+		k = awk::gensub("+", " ", "g", k)
+		v = awk::gensub("+", " ", "g", v)
 		out[k] = v
 	}
 }
@@ -84,3 +86,4 @@ function parse_cookie(out,
 
 function is_get_request() { return ENVIRON["REQUEST_METHOD"] == "GET" }
 function is_post_request() { return ENVIRON["REQUEST_METHOD"] == "POST" }
+
