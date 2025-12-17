@@ -1,5 +1,7 @@
+%typedef: Role_t enum admin normal_user
 %rec: User
 %type: Username line
+%type: Role Role_t
 %type: PasswordHash line
-%mandatory: Username PasswordHash
+%mandatory: Username PasswordHash Role
 

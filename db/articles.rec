@@ -1,9 +1,10 @@
 %rec: Article
 %type: ID range 0 MAX
+%type: Author line
 %type: Title line
 %type: Datetime line
 %type: Timestamp range 0 MAX
 %key: ID
-%mandatory: ID
+%mandatory: ID Author
 %sort: Timestamp
 
