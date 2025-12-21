@@ -16,9 +16,9 @@ An exercise of the LAR stack
 
 LAR: lighttpd + awk + recutils
 
-NOTE: requires gawk because we used multi-dimension array.
+NOTE: requires gawk because we used ~~multi-dimension array~~ FFI to get bcrypt.
 
-Security is non-existent.
+Security is non-existent. Quality is non-existent as well (you can clearly tell this is written someone who has zero experience w/ awk but still chug along anyway).
 
 Code distributed in public domain and is provided here with absolutely no warranty.
 
