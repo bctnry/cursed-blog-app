@@ -64,7 +64,9 @@ function get_comment_by_id(doc_root, article_id, comment_id, out,
 	res = ""
 	while (cmd | getline line) { res = res line "\n" }
 	close(cmd)
+	if (trim_space(res) == "") { return 0 }
 	reclib::parse_record(res, out)
+	return 1
 }
 
 function update_comment_by_id(doc_root, article_id, comment_id,

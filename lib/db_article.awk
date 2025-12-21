@@ -1,3 +1,4 @@
+@include "../lib/aux.awk"
 
 function count_article(doc_root,
 					   #local
@@ -14,18 +15,20 @@ function get_article_by_id(doc_root, id, out,
 						   cmd, res, content_file, res2, line,
 						   articles_file) {
 	articles_file = doc_root "../db/articles.rec"
-	cmd = "recsel -t Article -e \"ID = " id "\""
+	cmd = "recsel -t Article -e \"ID = " int(id) "\""
 	cmd = cmd " " articles_file
 	delete out
 	res = ""
 	while (cmd | getline line) { res = res line "\n" }
 	close(cmd)
+	if (trim_space(res) == "") { return 0 }
 	reclib::parse_record(res, out)
 	content_file = sprintf("%s%s%d", doc_root, "../db/article/", id)
 	res2 = ""
 	while ((getline line < content_file) > 0) { res2 = res2 line "\n" }
 	close(content_file)
 	out["Content"] = res2
+	return 1
 }
 
 function get_all_articles(doc_root, out,

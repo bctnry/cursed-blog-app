@@ -36,7 +36,17 @@ function handle_article_get() {
 
 	getuser_res = get_user(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], user)
 
-	get_article_by_id(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["id"], article)
+	chk = get_article_by_id(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["id"], article)
+	if (!chk) {
+		cgi::write_http_status(404, "Not Found")
+		cgi::begin_write_http_header()
+		cgi::write_http_header("Content-Type", "text/html")
+		cgi::end_write_http_header()
+		printf("%s", render_error_template(\
+				   ENVIRON["DOCUMENT_ROOT"],
+				   404, "Article not found.", "/index.awk", -1))
+		return
+	}
 	get_all_comments_of_article(ENVIRON["DOCUMENT_ROOT"], GET_PARAMS["id"], comment_list)
 
 	cgi::write_http_status(200, "OK")
