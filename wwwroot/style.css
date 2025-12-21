@@ -10,7 +10,11 @@ body {
 .comment-id { display: inline-block; }
 .comment-id::before { content: "#"; }
 .comment-name { display: inline-block; }
-a { color: black; }
+a {
+	color: black;
+	text-decoration: underline;
+	cursor: pointer;
+}
 
 .login-form { margin-top: 3rem; }
 .login-form table { margin: 0 auto; }

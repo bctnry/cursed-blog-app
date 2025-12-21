@@ -54,51 +54,10 @@ function handle_get_all_articles(\
 	cgi::end_write_http_header()
 
 	header()
-	cgi::parse_cookie(COOKIE)
-	chkses_res = check_session(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], COOKIE["session"])
-	if (chkses_res) {
-		printf("<div class=\"meta\">logged in as %s. <a href=\"logout.awk\">logout</a> ",
-			   COOKIE["username"])
-		printf("<a href=\"create.awk\">new post</a>")
-		get_user(ENVIRON["DOCUMENT_ROOT"], COOKIE["username"], user)
-		if (user["Role"] == "admin") {
-			printf(" <a href=\"admin.awk\">admin</a>")
-		}
-		printf("</div>")
-	} else {
-		printf("<div class=\"meta\"><a href=\"login.awk\">login</a> <a href=\"register.awk\">register</a></div>")
-	}
 
-	printf("<div id=\"main\">")
-	printf("<div id=\"article-list\">")
+	printf("<div id=\"meta\" hx-get=\"___component_nav_bar.awk\" hx-target=\"#meta\" hx-trigger=\"load\"></div>")
+	printf("<div id=\"main\" hx-get=\"___component_article_list.awk\" hx-target=\"#main\" hx-trigger=\"load\"></div>")
 	
-	printf("<div class=\"top-nav\">")
-	if (page_num < page_count-1) {
-		printf("<a href=\"index.awk?p=%d&s=%d\">&lt;&lt;</a>", page_num+1, page_size)
-	}
-	
-	if (page_num > 0) {
-		printf("<a href=\"index.awk?p=%d&s=%d\">&gt;&gt;</a>", page_num-1, page_size)
-	}
-	printf("</div>")
-	
-	if (length(articles) <= 0) {
-		printf("<p>there's no article yet. ")
-		if (chkses_res) {
-			printf("<a href=\"create.awk\">write one</a>.")
-		}
-		printf("</p>")
-	} else {
-		reverse(articles, articles_2)
-		for (i in articles_2) {
-			reclib::parse_record(articles_2[i], article)
-			print render_article(article)
-		}
-	}
-
-	printf("</div>")
-	
-	printf("</div>")
 	footer()
 }
 
