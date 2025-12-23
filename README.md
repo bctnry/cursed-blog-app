@@ -18,7 +18,7 @@ LAR: lighttpd + awk + recutils
 
 NOTE: requires gawk because we used ~~multi-dimension array~~ FFI to get bcrypt.
 
-Security is non-existent. Quality is non-existent as well (you can clearly tell this is written someone who has zero experience w/ awk but still chug along anyway).
+Security is non-existent. Quality is non-existent as well (you can clearly tell this is written someone who has zero experience w/ awk but still chugged along anyway).
 
 Code distributed in public domain and is provided here with absolutely no warranty.
 
@@ -33,7 +33,7 @@ Please don't run this in production...
   
 Then:
   
-1. Compile the gawk_bcrypt extension (and you absolutely need this helper command). You can get it at https://github.com/bctnry/gawk-bcrypt .
+1. Compile the gawk_bcrypt extension (and you absolutely need this). You can get it at https://github.com/bctnry/gawk-bcrypt .
 2. Put the compiled extension (`bcrypt.so`) at the root directory & rename it to `gawk_bcrypt.so` (so that you won't be having chances of mistaking it for something important)
 3. Make sure that the following folders exist:
    + `./db/article`
